@@ -63,6 +63,13 @@ inline void Vector<T>::Resize(size_t newSize)
 	if (newSize < m_size)
 	{
 		m_size = newSize;
+		T* new_data = new T[m_size]; // skopiowane z reserve
+		for (size_t i = 0; i < m_size; ++i)
+		{
+			new_data[i] = m_data[i];
+		}
+		delete[] m_data;
+		m_data = new_data;
 	}
 	else if (newSize > m_size)
 	{
@@ -119,7 +126,8 @@ inline T* Vector<T>::Erase(T* pos)
 	{
 		m_data[i] = m_data[i + 1];
 	}
-	m_size--;
+	m_size = index;
+	m_capacity = m_size;
 	return m_data + index;
 }
 
