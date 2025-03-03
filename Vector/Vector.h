@@ -1,28 +1,32 @@
 #pragma once
 #include <stdexcept>
+#include <limits>
+
+using vectorSize = size_t;
 
 template <typename T> class Vector
 {
 public:
 	~Vector();
 	void PushBack(const T& value);
-	void Reserve(size_t newCap);
-	void Resize(size_t newSize);
+	void Reserve(vectorSize newCap);
+	void Resize(vectorSize newSize);
 	void ShrinkToFit();
-	size_t Capacity() const;
-	size_t Size() const;
+	vectorSize Capacity() const;
+	vectorSize Size() const;
 	T* Erase(T* pos);
-	T& At(size_t pos);
+	T& At(vectorSize pos);
 	T* Begin();
 	T* End();
 
-	T& operator[](size_t pos);
+	T& operator[](vectorSize pos);
 	Vector<T>& operator=(const Vector<T>& other);
 	bool operator==(const Vector<T>& other);
 private:
 	T* m_data = nullptr;
-	size_t m_size = 0;
-	size_t m_capacity = 0;
+	vectorSize m_size = 0;
+	vectorSize m_capacity = 0;
+	vectorSize m_maxSize = std::numeric_limits<vectorSize>::max();
 };
 
 template<typename T>
@@ -42,12 +46,16 @@ inline void Vector<T>::PushBack(const T& value)
 }
 
 template<typename T>
-inline void Vector<T>::Reserve(size_t newCap)
+inline void Vector<T>::Reserve(vectorSize newCap)
 {
+	if (newCap > m_maxSize)
+	{
+		throw std::length_error("new capacity is bigger than max size of vector");
+	}
 	if (newCap > m_capacity)
 	{
 		T* new_data = new T[newCap];
-		for (size_t i = 0; i < m_size; ++i)
+		for (vectorSize i = 0; i < m_size; ++i)
 		{
 			new_data[i] = m_data[i];
 		}
@@ -58,13 +66,17 @@ inline void Vector<T>::Reserve(size_t newCap)
 }
 
 template<typename T>
-inline void Vector<T>::Resize(size_t newSize)
+inline void Vector<T>::Resize(vectorSize newSize)
 {
+	if (newSize > m_maxSize)
+	{
+		throw std::length_error("new capacity is bigger than max size of vector");
+	}
 	if (newSize < m_size)
 	{
 		m_size = newSize;
 		T* new_data = new T[m_size]; // skopiowane z reserve
-		for (size_t i = 0; i < m_size; ++i)
+		for (vectorSize i = 0; i < m_size; ++i)
 		{
 			new_data[i] = m_data[i];
 		}
@@ -77,7 +89,7 @@ inline void Vector<T>::Resize(size_t newSize)
 		{
 			Reserve(newSize);
 		}
-		for (size_t i = m_size; i < newSize; ++i)
+		for (vectorSize i = m_size; i < newSize; ++i)
 		{
 			m_data[i] = T();
 		}
@@ -91,7 +103,7 @@ inline void Vector<T>::ShrinkToFit()
 	if (m_size < m_capacity)
 	{
 		T* new_data = new T[m_size]; // skopiowane z reserve
-		for (size_t i = 0; i < m_size; ++i)
+		for (vectorSize i = 0; i < m_size; ++i)
 		{
 			new_data[i] = m_data[i];
 		}
@@ -102,13 +114,13 @@ inline void Vector<T>::ShrinkToFit()
 }
 
 template<typename T>
-inline size_t Vector<T>::Capacity() const
+inline vectorSize Vector<T>::Capacity() const
 {
 	return m_capacity;
 }
 
 template<typename T>
-inline size_t Vector<T>::Size() const
+inline vectorSize Vector<T>::Size() const
 {
 	return m_size;
 }
@@ -116,13 +128,13 @@ inline size_t Vector<T>::Size() const
 template<typename T>
 inline T* Vector<T>::Erase(T* pos)
 {
-	size_t index = pos - m_data;
+	vectorSize index = pos - m_data;
 	if (index >= m_size)
 	{
 		throw std::out_of_range("Index out of range");
 	}
 
-	for (size_t i = index; i < m_size - 1; ++i)
+	for (vectorSize i = index; i < m_size - 1; ++i)
 	{
 		m_data[i] = m_data[i + 1];
 	}
@@ -132,7 +144,7 @@ inline T* Vector<T>::Erase(T* pos)
 }
 
 template<typename T>
-inline T& Vector<T>::At(size_t pos)
+inline T& Vector<T>::At(vectorSize pos)
 {
 	if (pos >= m_size)
 	{
@@ -154,7 +166,7 @@ inline T* Vector<T>::End()
 }
 
 template<typename T>
-inline T& Vector<T>::operator[](size_t pos)
+inline T& Vector<T>::operator[](vectorSize pos)
 {
 	return m_data[pos];
 }
@@ -170,7 +182,7 @@ inline Vector<T>& Vector<T>::operator=(const Vector<T>& other)
 		m_capacity = other.m_capacity;
 		m_data = new T[m_capacity];
 
-		for (size_t i = 0; i < m_size; ++i)
+		for (vectorSize i = 0; i < m_size; ++i)
 		{
 			m_data[i] = other.m_data[i];
 		}
@@ -185,7 +197,7 @@ inline bool Vector<T>::operator==(const Vector<T>& other)
 	{
 		return false;
 	}
-	for (size_t i = 0; i < m_size; ++i)
+	for (vectorSize i = 0; i < m_size; ++i)
 	{
 		if (m_data[i] != other.m_data[i])
 		{

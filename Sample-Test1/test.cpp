@@ -1,3 +1,4 @@
+#include <limits>
 #include "gtest/gtest.h"
 #include "Vector.h"
 
@@ -28,37 +29,55 @@ TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenAccessOperato
 	EXPECT_EQ(vec.Capacity(), 4);
 }
 
-TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenAccessOperatorIsCalled_ThenCapacityShouldReturnEightAndSizeShouldReturnFive)
+TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenAnotherPushBackIsCalled_ThenCapacityShouldReturnEightAndSizeShouldReturnFive)
 {
 	vec.PushBack(1430254);
 	EXPECT_EQ(vec.Size(), 5);
 	EXPECT_EQ(vec.Capacity(), 8);
 }
 
-TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenAccessOperatorIsCalled_ThenCapacityShouldReturnTenAndSizeShouldReturnFour)
+TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenReserveToTenIsCalled_ThenCapacityShouldReturnTenAndSizeShouldReturnFour)
 {
 	vec.Reserve(10);
 	EXPECT_EQ(vec.Size(), 4);
 	EXPECT_EQ(vec.Capacity(), 10);
 }
 
-TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenAccessOperatorIsCalled_ThenCapacityAndSizeShouldReturnTen)
+TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenResizeToTenIsCalled_ThenCapacityAndSizeShouldReturnTen)
 {
 	vec.Resize(10);
 	EXPECT_EQ(vec.Size(), 10);
 	EXPECT_EQ(vec.Capacity(), 10);
 }
 
-TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenAccessOperatorIsCalled_ThenCapacityAndSizeShouldReturnTen)
+TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenReserveToZeroIsCalled_ThenCapacityAndSizeShouldReturnTen)
 {
 	vec.Reserve(0);
 	EXPECT_EQ(vec.Size(), 4);
 	EXPECT_EQ(vec.Capacity(), 4);
 }
 
-TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenAccessOperatorIsCalled_ThenCapacityAndSizeShouldReturnTen)
+TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenResizeToZeroIsCalled_ThenCapacityShouldReturn4AndSizeShouldReturnZero)
 {
 	vec.Resize(0);
-	EXPECT_EQ(vec.Size(), 10);
-	EXPECT_EQ(vec.Capacity(), 10);
+	EXPECT_EQ(vec.Size(), 0);
+	EXPECT_EQ(vec.Capacity(), 4);
 }
+
+TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIsCalledAfterResizingToZero_ThenCapacityAndSizeShouldReturnZero)
+{
+	vec.Resize(0);
+	vec.ShrinkToFit();
+	EXPECT_EQ(vec.Size(), 0);
+	EXPECT_EQ(vec.Capacity(), 0);
+}
+
+//TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenReserveToNumberBiggerThanMaxVectorSizeIsCalled_ThenExceptionShouldBeThrown)
+//{
+//	EXPECT_THROW(vec.Reserve(std::numeric_limits<vectorSize>::max() + 10021), std::length_error);
+//}
+//
+//TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenResizeToNumberBiggerThanMaxVectorSizeIsCalled_ThenExceptionShouldBeThrown)
+//{
+//	EXPECT_THROW(vec.Resize(std::numeric_limits<vectorSize>::max() + 1), std::length_error);
+//}
