@@ -2,31 +2,33 @@
 #include <stdexcept>
 #include <limits>
 
-using vectorSize = size_t;
+using VectorSize = size_t;
 
-template <typename T> class Vector
+template <typename T> class Vector final
 {
 public:
 	~Vector();
 	void PushBack(const T& value);
-	void Reserve(vectorSize newCap);
-	void Resize(vectorSize newSize);
+	void Reserve(VectorSize newCap);
+	void Resize(VectorSize newSize);
 	void ShrinkToFit();
-	vectorSize Capacity() const;
-	vectorSize Size() const;
+	VectorSize Capacity() const;
+	VectorSize Size() const;
 	T* Erase(T* pos);
-	T& At(vectorSize pos);
-	T* Begin();
-	T* End();
+	T& At(VectorSize pos);
+	const T& At(VectorSize pos) const;
+	T* Begin() const;
+	T* End() const;
 
-	T& operator[](vectorSize pos);
+	T& operator[](VectorSize pos);
+	const T& operator[](VectorSize pos) const;
 	Vector<T>& operator=(const Vector<T>& other);
-	bool operator==(const Vector<T>& other);
+	bool operator==(const Vector<T>& other) const;
 private:
 	T* m_data = nullptr;
-	vectorSize m_size = 0;
-	vectorSize m_capacity = 0;
-	vectorSize m_maxSize = std::numeric_limits<vectorSize>::max();
+	VectorSize m_size = 0;
+	VectorSize m_capacity = 0;
+	VectorSize m_maxSize = std::numeric_limits<VectorSize>::max();
 };
 
 template<typename T>
@@ -46,7 +48,7 @@ inline void Vector<T>::PushBack(const T& value)
 }
 
 template<typename T>
-inline void Vector<T>::Reserve(vectorSize newCap)
+inline void Vector<T>::Reserve(VectorSize newCap)
 {
 	if (newCap > m_maxSize)
 	{
@@ -55,7 +57,7 @@ inline void Vector<T>::Reserve(vectorSize newCap)
 	if (newCap > m_capacity)
 	{
 		T* new_data = new T[newCap];
-		for (vectorSize i = 0; i < m_size; ++i)
+		for (VectorSize i = 0; i < m_size; ++i)
 		{
 			new_data[i] = m_data[i];
 		}
@@ -66,7 +68,7 @@ inline void Vector<T>::Reserve(vectorSize newCap)
 }
 
 template<typename T>
-inline void Vector<T>::Resize(vectorSize newSize)
+inline void Vector<T>::Resize(VectorSize newSize)
 {
 	if (newSize > m_maxSize)
 	{
@@ -76,7 +78,7 @@ inline void Vector<T>::Resize(vectorSize newSize)
 	{
 		m_size = newSize;
 		T* new_data = new T[m_size]; // skopiowane z reserve
-		for (vectorSize i = 0; i < m_size; ++i)
+		for (VectorSize i = 0; i < m_size; ++i)
 		{
 			new_data[i] = m_data[i];
 		}
@@ -89,7 +91,7 @@ inline void Vector<T>::Resize(vectorSize newSize)
 		{
 			Reserve(newSize);
 		}
-		for (vectorSize i = m_size; i < newSize; ++i)
+		for (VectorSize i = m_size; i < newSize; ++i)
 		{
 			m_data[i] = T();
 		}
@@ -103,7 +105,7 @@ inline void Vector<T>::ShrinkToFit()
 	if (m_size < m_capacity)
 	{
 		T* new_data = new T[m_size]; // skopiowane z reserve
-		for (vectorSize i = 0; i < m_size; ++i)
+		for (VectorSize i = 0; i < m_size; ++i)
 		{
 			new_data[i] = m_data[i];
 		}
@@ -114,13 +116,13 @@ inline void Vector<T>::ShrinkToFit()
 }
 
 template<typename T>
-inline vectorSize Vector<T>::Capacity() const
+inline VectorSize Vector<T>::Capacity() const
 {
 	return m_capacity;
 }
 
 template<typename T>
-inline vectorSize Vector<T>::Size() const
+inline VectorSize Vector<T>::Size() const
 {
 	return m_size;
 }
@@ -128,23 +130,22 @@ inline vectorSize Vector<T>::Size() const
 template<typename T>
 inline T* Vector<T>::Erase(T* pos)
 {
-	vectorSize index = pos - m_data;
+	VectorSize index = pos - m_data;
 	if (index >= m_size)
 	{
 		throw std::out_of_range("Index out of range");
 	}
 
-	for (vectorSize i = index; i < m_size - 1; ++i)
+	for (VectorSize i = index; i < m_size - 1; ++i)
 	{
 		m_data[i] = m_data[i + 1];
 	}
-	m_size = index;
-	m_capacity = m_size;
+	m_size--;
 	return m_data + index;
 }
 
 template<typename T>
-inline T& Vector<T>::At(vectorSize pos)
+inline T& Vector<T>::At(VectorSize pos)
 {
 	if (pos >= m_size)
 	{
@@ -154,19 +155,35 @@ inline T& Vector<T>::At(vectorSize pos)
 }
 
 template<typename T>
-inline T* Vector<T>::Begin()
+inline const T& Vector<T>::At(VectorSize pos) const
+{
+	if (pos >= m_size)
+	{
+		throw std::out_of_range("Index out of range");
+	}
+	return m_data[pos];
+}
+
+template<typename T>
+inline T* Vector<T>::Begin() const
 {
 	return m_data;
 }
 
 template<typename T>
-inline T* Vector<T>::End()
+inline T* Vector<T>::End() const
 {
 	return m_data + m_size;
 }
 
 template<typename T>
-inline T& Vector<T>::operator[](vectorSize pos)
+inline T& Vector<T>::operator[](VectorSize pos)
+{
+	return m_data[pos];
+}
+
+template<typename T>
+inline const T& Vector<T>::operator[](VectorSize pos) const
 {
 	return m_data[pos];
 }
@@ -182,7 +199,7 @@ inline Vector<T>& Vector<T>::operator=(const Vector<T>& other)
 		m_capacity = other.m_capacity;
 		m_data = new T[m_capacity];
 
-		for (vectorSize i = 0; i < m_size; ++i)
+		for (VectorSize i = 0; i < m_size; ++i)
 		{
 			m_data[i] = other.m_data[i];
 		}
@@ -191,13 +208,13 @@ inline Vector<T>& Vector<T>::operator=(const Vector<T>& other)
 }
 
 template<typename T>
-inline bool Vector<T>::operator==(const Vector<T>& other)
+inline bool Vector<T>::operator==(const Vector<T>& other) const
 {
 	if (m_size != other.m_size)
 	{
 		return false;
 	}
-	for (vectorSize i = 0; i < m_size; ++i)
+	for (VectorSize i = 0; i < m_size; ++i)
 	{
 		if (m_data[i] != other.m_data[i])
 		{

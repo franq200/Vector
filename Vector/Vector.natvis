@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="Vector&lt;*&gt;">
+        <!-- Tekstowa reprezentacja obiektu w oknie debugera -->
+        <DisplayString>Vector of {m_size} elements (Capacity: {m_capacity})</DisplayString>
+        
+        <!-- Rozwini�cie obiektu pokazuj�ce kluczowe pola -->
+        <Expand>
+            <Item Name="Size">m_size</Item>
+            <Item Name="Capacity">m_capacity</Item>
+            
+            <!-- Wy�wietlanie wszystkich element�w wektora -->
+            <ArrayItems>
+                <Size>m_size</Size>
+                <ValuePointer>m_data</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+</AutoVisualizer>

@@ -1,6 +1,6 @@
-#include <limits>
 #include "gtest/gtest.h"
 #include "Vector.h"
+#include <limits>
 
 class VectorTest : public ::testing::Test
 {
@@ -13,14 +13,19 @@ protected:
 		vec.PushBack(-4325325);
 		vec.PushBack(0);
 	}
+
+	void ExpectAllDefaultValues()
+	{
+		EXPECT_EQ(vec[0], 30);
+		EXPECT_EQ(vec[1], 10432042);
+		EXPECT_EQ(vec[2], -4325325);
+		EXPECT_EQ(vec[3], 0);
+	}
 };
 
 TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenAccessOperatorIsCalled_ThenShouldReturnValuesInPushBackOrder)
 {
-	EXPECT_EQ(vec[0], 30);
-	EXPECT_EQ(vec[1], 10432042);
-	EXPECT_EQ(vec[2], -4325325);
-	EXPECT_EQ(vec[3], 0);
+	ExpectAllDefaultValues();
 }
 
 TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenAccessOperatorIsCalled_ThenCapacityAndSizeShouldReturnFour)
@@ -41,6 +46,8 @@ TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenReserveToTenI
 	vec.Reserve(10);
 	EXPECT_EQ(vec.Size(), 4);
 	EXPECT_EQ(vec.Capacity(), 10);
+
+	ExpectAllDefaultValues();
 }
 
 TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenResizeToTenIsCalled_ThenCapacityAndSizeShouldReturnTen)
@@ -48,6 +55,8 @@ TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenResizeToTenIs
 	vec.Resize(10);
 	EXPECT_EQ(vec.Size(), 10);
 	EXPECT_EQ(vec.Capacity(), 10);
+
+	ExpectAllDefaultValues();
 }
 
 TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenReserveToZeroIsCalled_ThenCapacityAndSizeShouldReturnTen)
@@ -55,6 +64,8 @@ TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenReserveToZero
 	vec.Reserve(0);
 	EXPECT_EQ(vec.Size(), 4);
 	EXPECT_EQ(vec.Capacity(), 4);
+
+	ExpectAllDefaultValues();
 }
 
 TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenResizeToZeroIsCalled_ThenCapacityShouldReturn4AndSizeShouldReturnZero)
