@@ -7,6 +7,17 @@ using VectorSize = size_t;
 template <typename T> class Vector final
 {
 public:
+	struct Iterator
+	{
+		Iterator& operator ++();
+		Iterator& operator --();
+		T& operator*();
+	private:
+		T* m_value;
+	};
+	Vector() = default;
+	Vector(const Vector<T>& other);
+	Vector(Vector&& other);
 	~Vector();
 	void PushBack(const T& value);
 	void Reserve(VectorSize newCap);
@@ -23,6 +34,7 @@ public:
 	T& operator[](VectorSize pos);
 	const T& operator[](VectorSize pos) const;
 	Vector<T>& operator=(const Vector<T>& other);
+	Vector<T>& operator=(Vector<T>&& other);
 	bool operator==(const Vector<T>& other) const;
 private:
 	T* m_data = nullptr;
@@ -30,6 +42,28 @@ private:
 	VectorSize m_capacity = 0;
 	VectorSize m_maxSize = std::numeric_limits<VectorSize>::max();
 };
+
+template<typename T>
+inline Vector<T>::Vector(const Vector<T>& other)
+{
+	m_size = other.m_size;
+	m_capacity = other.m_capacity;
+	m_data = new T[m_capacity];
+
+	for (VectorSize i = 0; i < m_size; ++i)
+	{
+		m_data[i] = other.m_data[i];
+	}
+}
+
+template<typename T>
+inline Vector<T>::Vector(Vector&& other)
+{
+	m_size = other.m_size;
+	m_capacity = other.m_capacity;
+	m_data = other.m_data;
+	other.m_data = nullptr;
+}
 
 template<typename T>
 inline Vector<T>::~Vector()
@@ -208,6 +242,19 @@ inline Vector<T>& Vector<T>::operator=(const Vector<T>& other)
 }
 
 template<typename T>
+inline Vector<T>& Vector<T>::operator=(Vector<T>&& other)
+{
+	if (this != &other)
+	{
+		m_size = other.m_size;
+		m_capacity = other.m_capacity;
+		m_data = other.m_data;
+		other.m_data = nullptr;
+	}
+	return *this;
+}
+
+template<typename T>
 inline bool Vector<T>::operator==(const Vector<T>& other) const
 {
 	if (m_size != other.m_size)
@@ -222,4 +269,22 @@ inline bool Vector<T>::operator==(const Vector<T>& other) const
 		}
 	}
 	return true;
+}
+
+template<typename T>
+inline Vector<T>::Iterator& Vector<T>::Iterator::operator++()
+{
+	// TODO: insert return statement here
+}
+
+template<typename T>
+inline Vector<T>::Iterator& Vector<T>::Iterator::operator--()
+{
+	// TODO: insert return statement here
+}
+
+template<typename T>
+inline T& Vector<T>::Iterator::operator*()
+{
+	return 
 }
