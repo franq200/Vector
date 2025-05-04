@@ -85,7 +85,7 @@ TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIs
 
 TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIsCalledAfterResizingToZero_ThenCapacityAndSizeShouldReturnZero123)
 {
-	vec.Erase(vec.Begin());
+	vec.Erase(vec.begin());
 	EXPECT_EQ(vec[0], 10432042);
 	EXPECT_EQ(vec[1], -4325325);
 	EXPECT_EQ(vec[2], 0);
@@ -98,7 +98,7 @@ TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIs
 
 TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIsCalledAfterResizingToZero_ThenCapacityAndSizeShouldReturnZero12)
 {
-	vec.Erase(&vec.At(1));
+	vec.Erase(vec.begin() + 1);
 	EXPECT_EQ(vec[0], 30);
 	EXPECT_EQ(vec[1], -4325325);
 	EXPECT_EQ(vec[2], 0);
@@ -111,7 +111,7 @@ TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIs
 
 TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIsCalledAfterResizingToZero_ThenCapacityAndSizeShouldReturnZero1)
 {
-	vec.Erase(&vec.At(3));
+	vec.Erase(vec.begin() + 3);
 	EXPECT_EQ(vec[0], 30);
 	EXPECT_EQ(vec[1], 10432042);
 	EXPECT_EQ(vec[2], -4325325);
@@ -165,6 +165,31 @@ TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIs
 	EXPECT_EQ(&vec2[3], vecFourth);
 }
 
+TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIsCalledAfterResizingToZero_ThenCapacityAndSizeShouldReturnZero1237653)
+{
+	for (int& el : vec)
+	{
+		el += 1;
+	}
+	EXPECT_EQ(vec[0], 31);
+	EXPECT_EQ(vec[1], 10432043);
+	EXPECT_EQ(vec[2], -4325324);
+	EXPECT_EQ(vec[3], 1);
+}
+
+TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIsCalledAfterResizingToZero_ThenCapacityAndSizeShouldReturnZero12376534)
+{
+	EXPECT_EQ(*vec.cbegin(), 30);
+	EXPECT_EQ(vec[1], 10432042);
+	EXPECT_EQ(vec[2], -4325325);
+	EXPECT_EQ(*(vec.cend()-1), 0);
+}
+
+TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenShrinkToFitIsCalledAfterResizingToZero_ThenCapacityAndSizeShouldReturnZero123765345)
+{
+	auto distance = std::distance(vec.begin(), vec.end());
+	EXPECT_EQ(distance, 4);
+}
 
 //TEST_F(VectorTest, GivenVectorWithFourValuesInsertedByPushBack_WhenReserveToNumberBiggerThanMaxVectorSizeIsCalled_ThenExceptionShouldBeThrown)
 //{

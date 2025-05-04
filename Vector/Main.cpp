@@ -21,7 +21,7 @@ int main()
 	std::cout << "\n" << vec.Capacity() << vec.Size();
 	vec2.ShrinkToFit();
 	std::cout << "\n" << vec2.Capacity() << vec2.Size();
-	vec.Erase(vec.Begin() + 2);
+	vec.Erase(vec.begin() + 2);
 	std::cout << "\n" << vec.Capacity() << vec.Size();
 	vec.PushBack(6);
 	std::cout << "\n" << vec[0] << vec[2];
