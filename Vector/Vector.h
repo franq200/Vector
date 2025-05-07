@@ -11,9 +11,9 @@ public:
 	class const_Iterator;
 	struct Iterator
 	{
-		using iterator_category = std::contiguous_iterator_tag;
+		using iterator_category = std::random_access_iterator_tag;
 		using value_type        = T;
-		using difference_type   = VectorSize;
+		using difference_type   = std::ptrdiff_t;
 		using pointer           = T*;
 		using reference         = T&;
 
@@ -21,26 +21,26 @@ public:
 		Iterator operator ++(int);
 		Iterator& operator ++();
 		Iterator operator --(int);
+		Iterator& operator --();
 		VectorSize operator -(const Iterator& it) const;
 		Iterator operator +(VectorSize pos) const;
 		Iterator operator -(VectorSize pos) const;
-		Iterator& operator+=(difference_type n);
-		Iterator& operator-=(difference_type n);
-		T& operator[](difference_type n) const;
+		Iterator& operator+=(difference_type pos);
+		Iterator& operator-=(difference_type pos);
+		T& operator[](difference_type pos) const;
 		bool operator<(const Iterator& it) const;
 		bool operator>(const Iterator& it) const;
 		bool operator<=(const Iterator& it) const;
 		bool operator>=(const Iterator& it) const;
 		bool operator !=(const Iterator& it) const;
 		bool operator ==(const Iterator& it) const;
-		T& operator*();
-		T* operator->();
+		T& operator*() const;
+		T* operator->() const;
 		operator const_Iterator() const { return const_Iterator(m_value); }
 
 	private:
 		T* m_value;
 	};
-
 	struct const_Iterator
 	{
 		using iterator_category = std::contiguous_iterator_tag;
@@ -53,9 +53,17 @@ public:
 		const_Iterator operator ++(int);
 		const_Iterator& operator ++();
 		const_Iterator operator --(int);
+		Iterator& operator --();
 		VectorSize operator -(const const_Iterator& it) const;
 		const_Iterator operator +(VectorSize pos) const;
 		const_Iterator operator -(VectorSize pos) const;
+		const_Iterator& operator+=(difference_type pos);
+		const_Iterator& operator-=(difference_type pos);
+		T& operator[](difference_type pos) const;
+		bool operator<(const Iterator& it) const;
+		bool operator>(const Iterator& it) const;
+		bool operator<=(const Iterator& it) const;
+		bool operator>=(const Iterator& it) const;
 		bool operator !=(const const_Iterator& it) const;
 		bool operator ==(const const_Iterator& it) const;
 		const T& operator*() const;
@@ -354,6 +362,13 @@ typename Vector<T>::Iterator Vector<T>::Iterator::operator--(int)
 }
 
 template<typename T>
+inline Vector<T>::Iterator& Vector<T>::Iterator::operator--()
+{
+	m_value--;
+	return *this;
+}
+
+template<typename T>
 inline VectorSize Vector<T>::Iterator::operator-(const Iterator& it) const
 {
 	return m_value - it.m_value;
@@ -375,14 +390,14 @@ template<typename T>
 inline Vector<T>::Iterator& Vector<T>::Iterator::operator+=(difference_type pos)
 {
 	m_value += pos;
-	return Vector<T>(m_value);
+	return *this;
 }
 
 template<typename T>
 inline Vector<T>::Iterator& Vector<T>::Iterator::operator-=(difference_type pos)
 {
 	m_value -= pos;
-	return Vector<T>(m_value);
+	return *this;
 }
 
 template<typename T>
@@ -428,13 +443,13 @@ inline bool Vector<T>::Iterator::operator==(const Iterator& it) const
 }
 
 template<typename T>
-inline T& Vector<T>::Iterator::operator*()
+inline T& Vector<T>::Iterator::operator*() const
 {
 	return *m_value;
 }
 
 template<typename T>
-inline T* Vector<T>::Iterator::operator->()
+inline T* Vector<T>::Iterator::operator->() const
 {
 	return m_value;
 }
@@ -460,6 +475,13 @@ typename Vector<T>::const_Iterator Vector<T>::const_Iterator::operator--(int)
 }
 
 template<typename T>
+inline Vector<T>::Iterator& Vector<T>::const_Iterator::operator--()
+{
+	m_value--;
+	return *this;
+}
+
+template<typename T>
 inline VectorSize Vector<T>::const_Iterator::operator-(const const_Iterator& it) const
 {
 	return m_value - it.m_value;
@@ -475,6 +497,50 @@ template<typename T>
 typename Vector<T>::const_Iterator Vector<T>::const_Iterator::operator-(VectorSize pos) const
 {
 	return Vector<T>::const_Iterator(m_value - pos);
+}
+
+template<typename T>
+inline Vector<T>::const_Iterator& Vector<T>::const_Iterator::operator+=(difference_type pos)
+{
+	m_value += pos;
+	return *this;
+}
+
+template<typename T>
+inline Vector<T>::const_Iterator& Vector<T>::const_Iterator::operator-=(difference_type pos)
+{
+	m_value -= pos;
+	return *this;
+}
+
+template<typename T>
+inline T& Vector<T>::const_Iterator::operator[](difference_type pos) const
+{
+	return m_value[pos];
+}
+
+template<typename T>
+inline bool Vector<T>::const_Iterator::operator<(const Iterator& it) const
+{
+	return m_value < it.m_value;
+}
+
+template<typename T>
+inline bool Vector<T>::const_Iterator::operator>(const Iterator& it) const
+{
+	return m_value > it.m_value;
+}
+
+template<typename T>
+inline bool Vector<T>::const_Iterator::operator<=(const Iterator& it) const
+{
+	return m_value <= it.m_value;
+}
+
+template<typename T>
+inline bool Vector<T>::const_Iterator::operator>=(const Iterator& it) const
+{
+	return m_value >= it.m_value;
 }
 
 template<typename T>
